@@ -27,7 +27,10 @@ export function Sidebar({
   return (
     <aside
       className={cn(
-        "flex flex-col border-r border-slate-200 bg-white",
+        "flex max-w-screen flex-col border border-slate-600 bg-white transition-transform duration-300 md:translate-x-0 md:border-0",
+        selectedCompanyId
+          ? "-translate-x-full md:translate-x-0"
+          : "translate-x-0",
         className,
       )}
     >
