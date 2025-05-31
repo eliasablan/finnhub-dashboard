@@ -1,41 +1,13 @@
 "use client";
 
-import { Data } from "@/types/types";
+import { Data, InsiderData } from "@/types/types";
 import React, { useState } from "react";
 import { useDashboardContext } from "./DashboardContext";
 import StockInfo from "@/components/StockInfo";
 import StockChart from "@/components/StockChart";
 
-interface InsiderTransaction {
-  id: string;
-  filingDate: string;
-  transactionCoding: string;
-  quantity: number;
-  price: number;
-  ownershipType: string;
-  footnotes?: { [key: string]: string[] };
-}
-
-interface CompanyInsider {
-  insider: {
-    id: string;
-    name: string;
-    relationship: string;
-  };
-  transactions: InsiderTransaction[];
-  total_securities_purchased: number;
-  total_securities_sold: number;
-  total_securities_purchased_value: number;
-  total_securities_sold_value: number;
-}
-
-function InsiderSection({ insider }: { insider: CompanyInsider }) {
+function InsiderSection({ insider }: { insider: InsiderData }) {
   const [isExpanded, setIsExpanded] = useState(false);
-  const netPosition =
-    insider.total_securities_purchased - insider.total_securities_sold;
-  const netValue =
-    insider.total_securities_purchased_value -
-    insider.total_securities_sold_value;
 
   return (
     <div className="mb-4 rounded-lg border border-slate-200 bg-white">

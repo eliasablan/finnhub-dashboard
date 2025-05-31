@@ -1,15 +1,16 @@
 import React from "react";
+import { Transaction } from "@/types/types";
 
-function TransactionHistory({ transactions }: { transactions: any[] }) {
+function TransactionHistory({ transactions }: { transactions: Transaction[] }) {
   return (
-    <div className="bg-white rounded-xl p-6 shadow-sm border border-slate-200">
-      <h2 className="text-xl font-semibold mb-4 text-slate-900">
+    <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
+      <h2 className="mb-4 text-xl font-semibold text-slate-900">
         Transaction History
       </h2>
       {transactions.map((transaction) => (
         <div
           key={transaction.id}
-          className="p-4 border-b border-slate-200 last:border-b-0 hover:bg-slate-50 transition-colors duration-200"
+          className="border-b border-slate-200 p-4 transition-colors duration-200 last:border-b-0 hover:bg-slate-50"
         >
           <p className="text-sm text-slate-600">
             Date: {new Date(transaction.filingDate).toLocaleDateString()}
