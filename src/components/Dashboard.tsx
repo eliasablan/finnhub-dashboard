@@ -1,7 +1,7 @@
 "use client";
 
 import { Data, InsiderData } from "@/types/types";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useDashboardContext } from "./DashboardContext";
 import StockInfo from "@/components/StockInfo";
 import StockChart from "@/components/StockChart";
@@ -128,11 +128,18 @@ function InsiderSection({ insider }: { insider: InsiderData }) {
 }
 
 function Dashboard({ data }: { data: Data }) {
-  const { selectedCompanyId } = useDashboardContext();
+  const { selectedCompanyId, setSelectedCompanyId } = useDashboardContext();
   const company = data.companies.find((c) => c.id === selectedCompanyId);
   const insiders = data.insiders.filter(
     (insider) => insider.company.id === selectedCompanyId,
   );
+
+  useEffect(() => {
+    // If the company ID from URL is invalid, clear it
+    if (selectedCompanyId && !company) {
+      setSelectedCompanyId(null);
+    }
+  }, [selectedCompanyId, company, setSelectedCompanyId]);
 
   if (!company) {
     return (

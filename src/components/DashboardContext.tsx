@@ -4,10 +4,13 @@ import {
   createContext,
   useContext,
   useState,
+  useEffect,
   type ReactNode,
   type Dispatch,
   type SetStateAction,
 } from "react";
+import { useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 
 interface DashboardContextType {
   isLoading: boolean;
@@ -28,18 +31,43 @@ export function DashboardProvider({ children }: { children: ReactNode }) {
   const [selectedCompanyId, setSelectedCompanyId] = useState<string | null>(
     null,
   );
+  const router = useRouter();
+  const searchParams = useSearchParams();
+
+  // Update URL when company is selected
+  const handleCompanySelection: Dispatch<SetStateAction<string | null>> = (
+    value,
+  ) => {
+    const newCompanyId =
+      typeof value === "function" ? value(selectedCompanyId) : value;
+    setSelectedCompanyId(newCompanyId);
+
+    if (newCompanyId) {
+      router.push(`?company=${newCompanyId}`);
+    } else {
+      router.push("/");
+    }
+  };
+
+  // Initialize selected company from URL on mount
+  useEffect(() => {
+    const companyFromUrl = searchParams.get("company");
+    if (companyFromUrl) {
+      setSelectedCompanyId(companyFromUrl);
+    }
+  }, [searchParams]);
+
+  const value = {
+    isLoading,
+    setIsLoading,
+    searchQuery,
+    setSearchQuery,
+    selectedCompanyId,
+    setSelectedCompanyId: handleCompanySelection,
+  };
 
   return (
-    <DashboardContextInstance.Provider
-      value={{
-        isLoading,
-        setIsLoading,
-        searchQuery,
-        setSearchQuery,
-        selectedCompanyId,
-        setSelectedCompanyId,
-      }}
-    >
+    <DashboardContextInstance.Provider value={value}>
       {children}
     </DashboardContextInstance.Provider>
   );
