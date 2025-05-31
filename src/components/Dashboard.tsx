@@ -10,7 +10,6 @@ import TransactionHistory from "@/components/TransactionHistory";
 
 function Dashboard({ data }: { data: Data }) {
   const { selectedCompanyId } = useDashboardContext();
-  console.log({ selectedCompanyId });
   const company = data.companies.find((c) => c.id === selectedCompanyId);
 
   const insiders = data.insiders.filter(
