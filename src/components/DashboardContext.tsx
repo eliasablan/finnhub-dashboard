@@ -4,7 +4,6 @@ import {
   createContext,
   useContext,
   useState,
-  useEffect,
   type ReactNode,
   type Dispatch,
   type SetStateAction,
@@ -18,7 +17,7 @@ interface DashboardContextType {
   searchQuery: string;
   setSearchQuery: Dispatch<SetStateAction<string>>;
   selectedCompanyId: string | null;
-  setSelectedCompanyId: Dispatch<SetStateAction<string | null>>;
+  setSelectedCompanyId: (companyId: string | null) => void;
 }
 
 const DashboardContextInstance = createContext<
@@ -28,34 +27,18 @@ const DashboardContextInstance = createContext<
 export function DashboardProvider({ children }: { children: ReactNode }) {
   const [isLoading, setIsLoading] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedCompanyId, setSelectedCompanyId] = useState<string | null>(
-    null,
-  );
   const router = useRouter();
   const searchParams = useSearchParams();
 
-  // Update URL when company is selected
-  const handleCompanySelection: Dispatch<SetStateAction<string | null>> = (
-    value,
-  ) => {
-    const newCompanyId =
-      typeof value === "function" ? value(selectedCompanyId) : value;
-    setSelectedCompanyId(newCompanyId);
+  const selectedCompanyId = searchParams.get("company");
 
-    if (newCompanyId) {
-      router.push(`?company=${newCompanyId}`);
+  const handleCompanySelection = (companyId: string | null) => {
+    if (companyId) {
+      router.push(`?company=${companyId}`);
     } else {
       router.push("/");
     }
   };
-
-  // Initialize selected company from URL on mount
-  useEffect(() => {
-    const companyFromUrl = searchParams.get("company");
-    if (companyFromUrl) {
-      setSelectedCompanyId(companyFromUrl);
-    }
-  }, [searchParams]);
 
   const value = {
     isLoading,
