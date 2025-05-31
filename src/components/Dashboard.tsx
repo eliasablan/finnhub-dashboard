@@ -222,20 +222,28 @@ function Dashboard({ data }: { data: Data }) {
             Insider Transactions
           </h2>
           <div className="space-y-4">
-            {insiders
-              .sort((a, b) => {
-                // Ordenar primero por volumen total de transacciones
-                const volumeA =
-                  a.total_securities_purchased_value +
-                  a.total_securities_sold_value;
-                const volumeB =
-                  b.total_securities_purchased_value +
-                  b.total_securities_sold_value;
-                return volumeB - volumeA;
-              })
-              .map((insider) => (
-                <InsiderSection key={insider.insider.id} insider={insider} />
-              ))}
+            {insiders.length > 0 ? (
+              insiders
+                .sort((a, b) => {
+                  // Ordenar primero por volumen total de transacciones
+                  const volumeA =
+                    a.total_securities_purchased_value +
+                    a.total_securities_sold_value;
+                  const volumeB =
+                    b.total_securities_purchased_value +
+                    b.total_securities_sold_value;
+                  return volumeB - volumeA;
+                })
+                .map((insider) => (
+                  <InsiderSection key={insider.insider.id} insider={insider} />
+                ))
+            ) : (
+              <div className="rounded-lg border border-slate-200 bg-white p-6 text-center">
+                <p className="text-slate-600">
+                  No insider trading activity found for this company.
+                </p>
+              </div>
+            )}
           </div>
         </div>
       </div>
