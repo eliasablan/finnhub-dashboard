@@ -1,28 +1,19 @@
 "use client";
 
 import React from "react";
-import { Data } from "@/types/types";
-import { useDashboardContext } from "./DashboardContext";
+import { useDashboardContext } from "../providers/DashboardContext";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 
-export function Sidebar({
-  className,
-  data,
-}: {
-  className?: string;
-  data: Data;
-}) {
+export function Sidebar({ className }: { className?: string }) {
   const {
+    stockResults,
+    isLoading,
     searchQuery,
     setSearchQuery,
     setSelectedCompanyId,
     selectedCompanyId,
   } = useDashboardContext();
-
-  const filteredCompanies = data.companies.filter((company) =>
-    company.name.toLowerCase().includes(searchQuery.toLowerCase()),
-  );
 
   return (
     <aside
@@ -37,7 +28,7 @@ export function Sidebar({
       <div className="sticky top-0 z-10 border-b border-slate-200 bg-slate-500 p-4">
         <Input
           type="search"
-          placeholder="Search companies..."
+          placeholder="Search stocks..."
           value={searchQuery}
           onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
             setSearchQuery(e.target.value)
@@ -46,23 +37,35 @@ export function Sidebar({
         />
       </div>
       <div className="flex-1 overflow-y-auto">
-        {filteredCompanies.map((company) => (
-          <button
-            key={company.id}
-            onClick={() => setSelectedCompanyId(company.id)}
-            className={cn(
-              "w-full border-b border-slate-100 px-4 py-3 text-left transition-colors hover:bg-slate-200",
-              selectedCompanyId === company.id && "bg-slate-300",
-            )}
-          >
-            <h3 className="font-medium text-slate-900">{company.name}</h3>
-            {company.eod.length > 0 && (
-              <span className="text-sm text-slate-600">
-                Latest Price: ${company.eod[company.eod.length - 1].close}
-              </span>
-            )}
-          </button>
-        ))}
+        {Array.isArray(stockResults) &&
+          stockResults.map((company) => (
+            <button
+              key={company.symbol}
+              onClick={() => setSelectedCompanyId(company.symbol)}
+              className={cn(
+                "w-full border-b border-slate-100 px-4 py-3 text-left transition-colors hover:bg-slate-200",
+                selectedCompanyId === company.symbol && "bg-slate-300",
+              )}
+            >
+              <h3 className="font-medium text-slate-900">
+                {company.description}
+              </h3>
+              <div className="text-sm text-slate-600">
+                <span className="font-mono">{company.symbol}</span>
+                {company.displaySymbol &&
+                  company.displaySymbol !== company.symbol && (
+                    <span className="ml-2">({company.displaySymbol})</span>
+                  )}
+              </div>
+            </button>
+          ))}
+        {!isLoading && stockResults?.length === 0 && (
+          <div className="p-4 text-center text-slate-500">
+            {searchQuery.trim()
+              ? "No se encontraron resultados"
+              : "Busca una empresa o símbolo de stock"}
+          </div>
+        )}
       </div>
     </aside>
   );

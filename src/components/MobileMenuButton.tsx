@@ -1,6 +1,6 @@
 "use client";
 
-import { useDashboardContext } from "./DashboardContext";
+import { useDashboardContext } from "../providers/DashboardContext";
 
 export function MobileMenuButton() {
   const { setSelectedCompanyId, selectedCompanyId } = useDashboardContext();
