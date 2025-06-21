@@ -1,3 +1,4 @@
+import { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
 import { DefaultApi } from "finnhub-ts";
 
@@ -14,8 +15,13 @@ const finnhubClient = new DefaultApi({
   },
 });
 
-export async function GET() {
-  const { data } = await finnhubClient.stockSymbols("US");
+export async function GET(
+  _request: NextRequest,
+  { params }: { params: Promise<{ symbol: string }> },
+) {
+  const { symbol } = await params;
+
+  const { data } = await finnhubClient.companyProfile2(symbol);
 
   return NextResponse.json({ data });
 }

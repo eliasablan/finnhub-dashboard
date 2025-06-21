@@ -23,6 +23,22 @@ interface StockSearchResponse {
   result: StockSearchResult[];
 }
 
+type CompanyProfile = {
+  country: string;
+  currency: string;
+  estimateCurrency: string;
+  exchange: string;
+  finnhubIndustry: string;
+  ipo: string; // formato YYYY-MM-DD
+  logo: string; // URL
+  marketCapitalization: number;
+  name: string;
+  phone: string;
+  shareOutstanding: number;
+  ticker: string;
+  weburl: string; // URL
+};
+
 interface DashboardContextType {
   mobileOpen: boolean;
   setMobileOpen: Dispatch<SetStateAction<boolean>>;
@@ -32,8 +48,10 @@ interface DashboardContextType {
   setIsLoading: Dispatch<SetStateAction<boolean>>;
   searchQuery: string;
   setSearchQuery: Dispatch<SetStateAction<string>>;
-  selectedCompanyId: string;
-  setSelectedCompanyId: Dispatch<SetStateAction<string>>;
+  selectedCompanySymbol: string;
+  setSelectedCompanySymbol: Dispatch<SetStateAction<string>>;
+  companyData: CompanyProfile | null;
+  setCompanyData: Dispatch<SetStateAction<CompanyProfile | null>>;
 }
 
 const DashboardContextInstance = createContext<
@@ -47,10 +65,42 @@ export function DashboardProvider({ children }: { children: ReactNode }) {
   const [searchQuery, setSearchQuery] = useQueryState("q", {
     defaultValue: "",
   });
-  const [selectedCompanyId, setSelectedCompanyId] = useQueryState("company", {
-    defaultValue: "",
-  });
-  // const [companyData, setCompanyData] = useState<Company | null>(null);
+  const [selectedCompanySymbol, setSelectedCompanySymbol] = useQueryState(
+    "company",
+    {
+      defaultValue: "",
+    },
+  );
+  const [companyData, setCompanyData] = useState<CompanyProfile | null>(null);
+
+  // Actualizar la informacion de la empresa seleccionada
+  useEffect(() => {
+    const fetchCompanyData = async () => {
+      if (selectedCompanySymbol) {
+        const response = await fetch(`/api/stocks/${selectedCompanySymbol}`);
+        if (response.ok) {
+          const { data }: { data: CompanyProfile } = await response.json();
+          setCompanyData(data);
+        }
+      }
+    };
+    fetchCompanyData();
+  }, [selectedCompanySymbol]);
+
+  // Busqueda inicial de la empresa seleccionada
+  useEffect(() => {
+    const fetchInitialCompanyData = async () => {
+      console.log({ selectedCompanySymbol });
+      if (selectedCompanySymbol) {
+        const response = await fetch(`/api/stocks/${selectedCompanySymbol}`);
+        if (response.ok) {
+          const { data }: { data: CompanyProfile } = await response.json();
+          setCompanyData(data);
+        }
+      }
+    };
+    fetchInitialCompanyData();
+  }, []);
 
   // Actualizar los resultados de la búsqueda con debounce
   useEffect(() => {
@@ -143,8 +193,10 @@ export function DashboardProvider({ children }: { children: ReactNode }) {
     setIsLoading,
     searchQuery,
     setSearchQuery,
-    selectedCompanyId,
-    setSelectedCompanyId,
+    selectedCompanySymbol,
+    setSelectedCompanySymbol,
+    companyData,
+    setCompanyData,
   };
 
   return (

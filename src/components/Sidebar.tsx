@@ -13,15 +13,15 @@ export function Sidebar({ className }: { className?: string }) {
     isLoading,
     searchQuery,
     setSearchQuery,
-    setSelectedCompanyId,
-    selectedCompanyId,
+    setSelectedCompanySymbol,
+    selectedCompanySymbol,
   } = useDashboardContext();
 
   const handleClickCompany = (company: string) => {
-    if (company === selectedCompanyId) {
-      setSelectedCompanyId("");
+    if (company === selectedCompanySymbol) {
+      setSelectedCompanySymbol("");
     } else {
-      setSelectedCompanyId(company);
+      setSelectedCompanySymbol(company);
     }
     setMobileOpen(false);
   };
@@ -57,8 +57,9 @@ export function Sidebar({ className }: { className?: string }) {
               key={company.symbol}
               onClick={() => handleClickCompany(company.symbol)}
               className={cn(
-                selectedCompanyId === company.symbol && "bg-slate-300",
-                selectedCompanyId !== company.symbol && "hover:bg-slate-200",
+                selectedCompanySymbol === company.symbol && "bg-slate-300",
+                selectedCompanySymbol !== company.symbol &&
+                  "hover:bg-slate-200",
                 "w-full border-b border-slate-100 px-4 py-3 text-left transition-colors",
               )}
             >
