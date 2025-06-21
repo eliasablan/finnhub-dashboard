@@ -9,8 +9,7 @@ import {
   type SetStateAction,
   useEffect,
 } from "react";
-import { useSearchParams } from "next/navigation";
-import { useRouter } from "next/navigation";
+import { useQueryState } from "nuqs";
 
 interface StockSearchResult {
   description: string;
@@ -25,14 +24,16 @@ interface StockSearchResponse {
 }
 
 interface DashboardContextType {
+  mobileOpen: boolean;
+  setMobileOpen: Dispatch<SetStateAction<boolean>>;
   stockResults: StockSearchResult[];
   setStockResults: Dispatch<SetStateAction<StockSearchResult[]>>;
   isLoading: boolean;
   setIsLoading: Dispatch<SetStateAction<boolean>>;
   searchQuery: string;
   setSearchQuery: Dispatch<SetStateAction<string>>;
-  selectedCompanyId: string | null;
-  setSelectedCompanyId: (companyId: string | null) => void;
+  selectedCompanyId: string;
+  setSelectedCompanyId: Dispatch<SetStateAction<string>>;
 }
 
 const DashboardContextInstance = createContext<
@@ -40,32 +41,45 @@ const DashboardContextInstance = createContext<
 >(undefined);
 
 export function DashboardProvider({ children }: { children: ReactNode }) {
-  const [stockResults, setStockResults] = useState<StockSearchResult[]>([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [searchQuery, setSearchQuery] = useState("");
-  const router = useRouter();
-  const searchParams = useSearchParams();
+  const [stockResults, setStockResults] = useState<StockSearchResult[]>([]);
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useQueryState("q", {
+    defaultValue: "",
+  });
+  const [selectedCompanyId, setSelectedCompanyId] = useQueryState("company", {
+    defaultValue: "",
+  });
+  // const [companyData, setCompanyData] = useState<Company | null>(null);
 
   // Actualizar los resultados de la búsqueda con debounce
   useEffect(() => {
-    if (!searchQuery.trim()) {
-      setStockResults([]);
-      return;
-    }
-
     const timeoutId = setTimeout(async () => {
       setIsLoading(true);
       try {
-        const response = await fetch(
-          `/api/stocks/search?q=${encodeURIComponent(searchQuery)}`,
-        );
-        if (response.ok) {
-          const { data }: { data: StockSearchResponse } = await response.json();
-          // Extraer el array result de la respuesta
-          setStockResults(Array.isArray(data.result) ? data.result : []);
+        if (searchQuery) {
+          const response = await fetch(
+            `/api/stocks/search?q=${encodeURIComponent(searchQuery)}`,
+          );
+          if (response.ok) {
+            const { data }: { data: StockSearchResponse } =
+              await response.json();
+            // Extraer el array result de la respuesta
+            setStockResults(Array.isArray(data.result) ? data.result : []);
+          } else {
+            console.error(
+              "Error fetching search results:",
+              response.statusText,
+            );
+            setStockResults([]);
+          }
         } else {
-          console.error("Error fetching search results:", response.statusText);
-          setStockResults([]);
+          const response = await fetch("/api/stocks/list");
+          if (response.ok) {
+            const { data }: { data: StockSearchResult[] } =
+              await response.json();
+            setStockResults(Array.isArray(data) ? data.slice(0, 100) : []);
+          }
         }
       } catch (error) {
         console.error("Error fetching search results:", error);
@@ -81,38 +95,48 @@ export function DashboardProvider({ children }: { children: ReactNode }) {
 
   // Búsqueda inicial cuando se monta el componente
   useEffect(() => {
-    if (!searchQuery.trim()) {
-      const initialSearch = async () => {
-        setIsLoading(true);
-        try {
-          const response = await fetch("/api/stocks");
+    const initialSearch = async () => {
+      setIsLoading(true);
+      try {
+        console.log({ searchQuery });
+        if (searchQuery) {
+          const response = await fetch(
+            `/api/stocks/search?q=${encodeURIComponent(searchQuery)}`,
+          );
+          if (response.ok) {
+            const { data }: { data: StockSearchResponse } =
+              await response.json();
+            // Extraer el array result de la respuesta
+            setStockResults(Array.isArray(data.result) ? data.result : []);
+          } else {
+            console.error(
+              "Error fetching search results:",
+              response.statusText,
+            );
+            setStockResults([]);
+          }
+        } else {
+          const response = await fetch("/api/stocks/list");
           if (response.ok) {
             const { data }: { data: StockSearchResult[] } =
               await response.json();
             setStockResults(Array.isArray(data) ? data.slice(0, 100) : []);
           }
-        } catch (error) {
-          console.error("Error in initial search:", error);
-        } finally {
-          setIsLoading(false);
         }
-      };
-      initialSearch();
-    }
+      } catch (error) {
+        console.error("Error in initial search:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    initialSearch();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const selectedCompanyId = searchParams.get("company");
-
-  const handleCompanySelection = (companyId: string | null) => {
-    if (companyId) {
-      router.push(`?company=${companyId}`);
-    } else {
-      router.push("/");
-    }
-  };
-
   const value = {
+    mobileOpen,
+    setMobileOpen,
     stockResults,
     setStockResults,
     isLoading,
@@ -120,7 +144,7 @@ export function DashboardProvider({ children }: { children: ReactNode }) {
     searchQuery,
     setSearchQuery,
     selectedCompanyId,
-    setSelectedCompanyId: handleCompanySelection,
+    setSelectedCompanyId,
   };
 
   return (

@@ -1,5 +1,3 @@
-import data from "@/data.json";
-import { Data } from "@/types/types";
 import { DashboardProvider } from "@/providers/DashboardContext";
 import { Sidebar } from "@/components/Sidebar";
 import Dashboard from "@/components/Dashboard";
@@ -13,7 +11,7 @@ export default function Home() {
         <div className="flex h-screen max-h-screen overflow-hidden">
           <Sidebar className="absolute w-full md:relative md:w-[400px] md:flex-none" />
 
-          <Dashboard data={data as unknown as Data} />
+          <Dashboard />
           <MobileMenuButton />
         </div>
       </DashboardProvider>

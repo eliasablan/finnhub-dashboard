@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { useDashboardContext } from "../providers/DashboardContext";
+import { useDashboardContext } from "@/providers/DashboardContext";
 
 function Dashboard() {
   const { selectedCompanyId } = useDashboardContext();

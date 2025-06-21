@@ -7,6 +7,8 @@ import { cn } from "@/lib/utils";
 
 export function Sidebar({ className }: { className?: string }) {
   const {
+    mobileOpen,
+    setMobileOpen,
     stockResults,
     isLoading,
     searchQuery,
@@ -15,13 +17,21 @@ export function Sidebar({ className }: { className?: string }) {
     selectedCompanyId,
   } = useDashboardContext();
 
+  const handleClickCompany = (company: string) => {
+    if (company === selectedCompanyId) {
+      setSelectedCompanyId("");
+    } else {
+      setSelectedCompanyId(company);
+    }
+    setMobileOpen(false);
+  };
+  console.log({ mobileOpen });
+
   return (
     <aside
       className={cn(
         "flex max-w-screen flex-col border border-slate-600 bg-white transition-transform duration-300 md:translate-x-0 md:border-0",
-        selectedCompanyId
-          ? "-translate-x-full md:translate-x-0"
-          : "translate-x-0",
+        !mobileOpen ? "-translate-x-full md:translate-x-0" : "translate-x-0",
         className,
       )}
     >
@@ -37,14 +47,19 @@ export function Sidebar({ className }: { className?: string }) {
         />
       </div>
       <div className="flex-1 overflow-y-auto">
-        {Array.isArray(stockResults) &&
+        {isLoading && (
+          <div className="p-4 text-center text-slate-500">Cargando...</div>
+        )}
+        {!isLoading &&
+          Array.isArray(stockResults) &&
           stockResults.map((company) => (
             <button
               key={company.symbol}
-              onClick={() => setSelectedCompanyId(company.symbol)}
+              onClick={() => handleClickCompany(company.symbol)}
               className={cn(
-                "w-full border-b border-slate-100 px-4 py-3 text-left transition-colors hover:bg-slate-200",
                 selectedCompanyId === company.symbol && "bg-slate-300",
+                selectedCompanyId !== company.symbol && "hover:bg-slate-200",
+                "w-full border-b border-slate-100 px-4 py-3 text-left transition-colors",
               )}
             >
               <h3 className="font-medium text-slate-900">

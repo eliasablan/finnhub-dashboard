@@ -3,13 +3,13 @@
 import { useDashboardContext } from "../providers/DashboardContext";
 
 export function MobileMenuButton() {
-  const { setSelectedCompanyId, selectedCompanyId } = useDashboardContext();
+  const { mobileOpen, setMobileOpen } = useDashboardContext();
 
-  if (!selectedCompanyId) return null;
+  // if (mobileOpen) return null;
 
   return (
     <button
-      onClick={() => setSelectedCompanyId(null)}
+      onClick={() => setMobileOpen(!mobileOpen)}
       className="fixed right-4 bottom-4 z-50 rounded-full bg-slate-900 p-4 text-white shadow-lg transition-transform hover:scale-105 md:hidden"
     >
       <svg

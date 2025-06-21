@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import { FinnhubProvider } from "@/providers/FinnhubProvider";
+// import { FinnhubProvider } from "@/providers/FinnhubProvider";
+import { NuqsAdapter } from "nuqs/adapters/next/app";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -66,7 +67,9 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <FinnhubProvider>{children}</FinnhubProvider>
+        {/* <FinnhubProvider> */}
+        <NuqsAdapter>{children}</NuqsAdapter>
+        {/* </FinnhubProvider> */}
       </body>
     </html>
   );

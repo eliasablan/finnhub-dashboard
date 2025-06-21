@@ -17,7 +17,9 @@ const finnhubClient = new DefaultApi({
 export async function GET(request: NextRequest) {
   const searchParams = request.nextUrl.searchParams;
 
+  console.log({ searchParams });
   const { data } = await finnhubClient.symbolSearch(searchParams.get("q")!);
 
+  console.log({ data });
   return NextResponse.json({ data });
 }
