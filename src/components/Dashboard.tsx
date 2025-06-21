@@ -268,7 +268,7 @@ function StockQuote({ symbol }: { symbol: string }) {
   const isPositive = changePercent >= 0;
 
   return (
-    <div className="rounded-xl border border-slate-200 bg-white p-6">
+    <div className="h-fit rounded-xl border border-slate-200 bg-white p-6">
       <h3 className="mb-4 text-lg font-semibold text-slate-900">
         Cotización Actual
       </h3>
