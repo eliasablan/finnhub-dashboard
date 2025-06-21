@@ -17,3 +17,21 @@ export const FinnhubProvider = ({
     <FinnhubProviderBase client={fhClient}>{children}</FinnhubProviderBase>
   );
 };
+
+// export default function RootLayout({
+//   children,
+// }: Readonly<{
+//   children: React.ReactNode;
+// }>) {
+//   return (
+//     <html lang="en">
+//       <body
+//         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+//       >
+//         <FinnhubProvider>
+//           <NuqsAdapter>{children}</NuqsAdapter>
+//         </FinnhubProvider>
+//       </body>
+//     </html>
+//   );
+// }

@@ -90,7 +90,6 @@ export function DashboardProvider({ children }: { children: ReactNode }) {
   // Busqueda inicial de la empresa seleccionada
   useEffect(() => {
     const fetchInitialCompanyData = async () => {
-      console.log({ selectedCompanySymbol });
       if (selectedCompanySymbol) {
         const response = await fetch(`/api/stocks/${selectedCompanySymbol}`);
         if (response.ok) {
@@ -100,6 +99,7 @@ export function DashboardProvider({ children }: { children: ReactNode }) {
       }
     };
     fetchInitialCompanyData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Actualizar los resultados de la búsqueda con debounce
@@ -148,7 +148,6 @@ export function DashboardProvider({ children }: { children: ReactNode }) {
     const initialSearch = async () => {
       setIsLoading(true);
       try {
-        console.log({ searchQuery });
         if (searchQuery) {
           const response = await fetch(
             `/api/stocks/search?q=${encodeURIComponent(searchQuery)}`,

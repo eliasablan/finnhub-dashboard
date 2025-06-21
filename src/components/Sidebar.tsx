@@ -25,7 +25,6 @@ export function Sidebar({ className }: { className?: string }) {
     }
     setMobileOpen(false);
   };
-  console.log({ mobileOpen });
 
   return (
     <aside
