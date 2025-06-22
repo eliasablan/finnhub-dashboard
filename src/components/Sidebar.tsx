@@ -9,7 +9,7 @@ export function Sidebar({ className }: { className?: string }) {
     mobileOpen,
     setMobileOpen,
     stockResults,
-    isLoading,
+    isSidebarLoading,
     searchQuery,
     setSearchQuery,
     setSelectedCompanySymbol,
@@ -83,7 +83,7 @@ export function Sidebar({ className }: { className?: string }) {
             ))}
           </select>
 
-          {/* {isLoading && (
+          {/* {isSidebarLoading && (
             <div className="flex items-center justify-center pt-2 text-gray-500 dark:text-gray-400">
               <span className="mr-2 animate-spin">⏳</span>
               Cargando...
@@ -92,7 +92,7 @@ export function Sidebar({ className }: { className?: string }) {
         </div>
       </div>
       <div className="flex-1 overflow-y-auto">
-        {isLoading && (
+        {isSidebarLoading && (
           <>
             {Array.from({ length: 20 }).map((_, index) => (
               <div
@@ -126,7 +126,7 @@ export function Sidebar({ className }: { className?: string }) {
             ))}
           </>
         )}
-        {!isLoading &&
+        {!isSidebarLoading &&
           Array.isArray(stockResults) &&
           stockResults.map((company) => (
             <button
@@ -151,7 +151,7 @@ export function Sidebar({ className }: { className?: string }) {
               </div>
             </button>
           ))}
-        {!isLoading && stockResults?.length === 0 && (
+        {!isSidebarLoading && stockResults?.length === 0 && (
           <div className="p-4 text-center text-slate-500">
             {searchQuery.trim()
               ? "No se encontraron resultados"

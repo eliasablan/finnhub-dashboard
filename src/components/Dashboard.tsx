@@ -130,16 +130,16 @@ function CompanyHeader() {
   }
 
   return (
-    <header className="p-8 pb-0">
-      <div className="flex items-center justify-between rounded-xl border border-slate-200 bg-slate-600 p-6">
-        <div className="flex items-center gap-4">
+    <header className="@container p-8 pb-0">
+      <div className="flex flex-col items-center justify-between gap-4 rounded-xl border border-slate-200 bg-slate-600 p-6 @lg:flex-row">
+        <div className="flex w-full flex-row-reverse items-start justify-between gap-4 @lg:flex-row @lg:items-center @lg:justify-start">
           {companyData?.logo && (
             <Image
               src={companyData.logo}
               alt={companyData.name || ""}
               width={48}
               height={48}
-              className="rounded-full border-2 border-slate-200"
+              className="w-[48px] rounded-full border-2 border-slate-200"
             />
           )}
           <div>
@@ -151,16 +151,16 @@ function CompanyHeader() {
             </p>
           </div>
         </div>
-        <div className="space-y-1 text-right">
-          <p className="text-sm text-slate-200">
+        <div className="w-full space-y-1 text-left @lg:w-fit @lg:text-right">
+          <p className="text-sm text-nowrap text-slate-200">
             <span className="font-medium text-orange-200">País:</span>{" "}
             {companyData?.country}
           </p>
-          <p className="text-sm text-slate-200">
+          <p className="text-sm text-nowrap text-slate-200">
             <span className="font-medium text-orange-200">Industria:</span>{" "}
             {companyData?.finnhubIndustry}
           </p>
-          <p className="text-sm text-slate-200">
+          <p className="text-sm text-nowrap text-slate-200">
             <span className="font-medium text-orange-200">Moneda:</span>{" "}
             {companyData?.currency}
           </p>

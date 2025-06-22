@@ -46,8 +46,8 @@ interface DashboardContextType {
   setStockType: Dispatch<SetStateAction<(typeof stockTypes)[number] | "">>;
   stockResults: StockSearchResult[];
   setStockResults: Dispatch<SetStateAction<StockSearchResult[]>>;
-  isLoading: boolean;
-  setIsLoading: Dispatch<SetStateAction<boolean>>;
+  isSidebarLoading: boolean;
+  setIsSidebarLoading: Dispatch<SetStateAction<boolean>>;
   searchQuery: string;
   setSearchQuery: Dispatch<SetStateAction<string>>;
   selectedCompanySymbol: string;
@@ -95,7 +95,7 @@ export const stockTypes = [
 ];
 
 export function DashboardProvider({ children }: { children: ReactNode }) {
-  const [isLoading, setIsLoading] = useState(false);
+  const [isSidebarLoading, setIsSidebarLoading] = useState(false);
   const [isLoadingCompanyData, setIsLoadingCompanyData] = useState(false);
   const [stockResults, setStockResults] = useState<StockSearchResult[]>([]);
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -122,10 +122,16 @@ export function DashboardProvider({ children }: { children: ReactNode }) {
         const response = await fetch(`/api/stocks/${selectedCompanySymbol}`);
         if (response.ok) {
           const { data }: { data: CompanyProfile } = await response.json();
-          setCompanyData(data);
-          setSelectedCompanyHasData(true);
+          if (Object.keys(data).length === 0) {
+            setCompanyData(null);
+            setSelectedCompanyHasData(false);
+          } else {
+            setCompanyData(data);
+            setSelectedCompanyHasData(true);
+          }
         } else {
           setCompanyData(null);
+          console.log("flag1");
           setSelectedCompanyHasData(false);
         }
       }
@@ -151,7 +157,7 @@ export function DashboardProvider({ children }: { children: ReactNode }) {
 
   // Actualizar los resultados de la búsqueda con debounce cuando cambia el tipo de stock o la búsqueda
   useEffect(() => {
-    setIsLoading(true);
+    setIsSidebarLoading(true);
     const changeStockType = setTimeout(async () => {
       if (searchQuery) {
         const response = await fetch(
@@ -185,7 +191,7 @@ export function DashboardProvider({ children }: { children: ReactNode }) {
           );
         }
       }
-      setIsLoading(false);
+      setIsSidebarLoading(false);
     }, 1500);
     return () => clearTimeout(changeStockType);
   }, [stockType, searchQuery]);
@@ -193,7 +199,7 @@ export function DashboardProvider({ children }: { children: ReactNode }) {
   // Búsqueda inicial cuando se monta el componente
   useEffect(() => {
     const initialSearch = async () => {
-      setIsLoading(true);
+      setIsSidebarLoading(true);
       try {
         if (searchQuery) {
           const response = await fetch(
@@ -235,7 +241,7 @@ export function DashboardProvider({ children }: { children: ReactNode }) {
       } catch (error) {
         console.error("Error in initial search:", error);
       } finally {
-        setIsLoading(false);
+        setIsSidebarLoading(false);
       }
     };
 
@@ -244,16 +250,19 @@ export function DashboardProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const value = {
+    // UI
     mobileOpen,
     setMobileOpen,
+    // Búsqueda y filtrado
     stockType,
     setStockType,
     stockResults,
     setStockResults,
-    isLoading,
-    setIsLoading,
+    isSidebarLoading,
+    setIsSidebarLoading,
     searchQuery,
     setSearchQuery,
+    // Datos de compañía
     selectedCompanySymbol,
     setSelectedCompanySymbol,
     companyData,
