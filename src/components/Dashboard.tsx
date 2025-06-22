@@ -4,53 +4,21 @@ import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import { useDashboardContext } from "@/providers/DashboardContext";
 
-type CompanyProfile = {
-  country: string;
-  currency: string;
-  estimateCurrency: string;
-  exchange: string;
-  finnhubIndustry: string;
-  ipo: string;
-  logo: string;
-  marketCapitalization: number;
-  name: string;
-  phone: string;
-  shareOutstanding: number;
-  ticker: string;
-  weburl: string;
-};
-
-type StockQuoteData = {
-  c: number; // precio actual
-  h: number; // precio alto del día
-  l: number; // precio bajo del día
-  o: number; // precio de apertura
-  pc: number; // precio de cierre anterior
-  t: number; // timestamp
-};
-
-type NewsArticle = {
-  headline: string;
-  summary: string;
-  url: string;
-  datetime: number;
-};
-
 function Dashboard() {
-  const { companyData } = useDashboardContext();
+  const { companyData, isLoadingCompanyData, selectedCompanySymbol } =
+    useDashboardContext();
 
   return (
     <main className="flex-1 overflow-y-auto">
       <div className="mx-auto max-w-[1440px] p-8">
-        <CompanyHeader companyData={companyData} />
-
-        {companyData && (
+        <CompanyHeader />
+        {selectedCompanySymbol && !isLoadingCompanyData && companyData && (
           <>
-            <CompanyOverview companyData={companyData} />
+            <CompanyOverview />
 
             <div className="mb-8 grid grid-cols-1 gap-6 lg:grid-cols-2">
-              <StockQuote symbol={companyData.ticker} />
-              <CompanyNews symbol={companyData.ticker} />
+              <StockQuote />
+              <CompanyNews />
             </div>
           </>
         )}
@@ -60,25 +28,109 @@ function Dashboard() {
 }
 
 // Componentes auxiliares
-function CompanyHeader({
-  companyData,
-}: {
-  companyData: CompanyProfile | null;
-}) {
-  if (!companyData) {
+function CompanyHeader() {
+  const {
+    companyData,
+    selectedCompanyHasData,
+    selectedCompanySymbol,
+    isLoadingCompanyData,
+  } = useDashboardContext();
+
+  if (isLoadingCompanyData) {
     return (
-      <header className="mb-8">
-        <div className="flex items-center justify-center p-8">
-          <p className="text-lg text-slate-600">
+      <div className="flex h-dvh items-center justify-center gap-8">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="48"
+          height="48"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          className="animate-spin text-slate-600"
+        >
+          <path d="M21 12a9 9 0 1 1-6.219-8.56" />
+        </svg>
+        <div className="flex flex-col items-start justify-center gap-4">
+          <h3 className="text-xl font-semibold text-slate-900">
+            Cargando información de la empresa
+          </h3>
+          <p className="text-slate-600">Espere un momento...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (
+    !selectedCompanyHasData &&
+    selectedCompanySymbol &&
+    !isLoadingCompanyData
+  ) {
+    return (
+      <div className="flex h-dvh flex-col items-center justify-center gap-4">
+        <h2 className="text-2xl font-semibold text-slate-900">
+          {selectedCompanySymbol}
+        </h2>
+        <h3 className="text-xl font-semibold text-orange-800">
+          Información de la empresa
+        </h3>
+        <p className="text-slate-600">
+          No se pudo cargar la información de la empresa
+        </p>
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="48"
+          height="48"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          className="text-orange-800"
+        >
+          <path d="M12 12v4" />
+          <path d="M12 20h.01" />
+          <path d="M17 18h.5a1 1 0 0 0 0-9h-1.79A7 7 0 1 0 7 17.708" />
+        </svg>
+      </div>
+    );
+  }
+
+  if (!selectedCompanySymbol || !companyData) {
+    return (
+      <div className="flex h-dvh items-center justify-center gap-8">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="48"
+          height="48"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          className="text-slate-600"
+        >
+          <path d="M12.034 12.681a.498.498 0 0 1 .647-.647l9 3.5a.5.5 0 0 1-.033.943l-3.444 1.068a1 1 0 0 0-.66.66l-1.067 3.443a.5.5 0 0 1-.943.033z" />
+          <path d="M21 11V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h6" />
+        </svg>
+        <div className="flex flex-col items-start justify-center gap-4">
+          <h3 className="text-xl font-semibold text-slate-900">
+            Información de la empresa
+          </h3>
+          <p className="text-slate-600">
             Selecciona una empresa del panel lateral para ver su información
           </p>
         </div>
-      </header>
+      </div>
     );
   }
 
   return (
-    <header className="mb-8">
+    <header className="mb-8 rounded-xl border border-slate-200 bg-slate-600 p-6">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-4">
           {companyData?.logo && (
@@ -91,24 +143,26 @@ function CompanyHeader({
             />
           )}
           <div>
-            <h1 className="text-3xl font-bold text-slate-900">
+            <h1 className="text-3xl font-bold text-amber-200">
               {companyData?.name}
             </h1>
-            <p className="mt-1 text-lg text-slate-600">
+            <p className="mt-1 text-lg text-slate-200">
               {companyData?.ticker} • {companyData?.exchange}
             </p>
           </div>
         </div>
         <div className="space-y-1 text-right">
-          <p className="text-sm text-slate-600">
-            <span className="font-medium">País:</span> {companyData?.country}
+          <p className="text-sm text-slate-200">
+            <span className="font-medium text-orange-200">País:</span>{" "}
+            {companyData?.country}
           </p>
-          <p className="text-sm text-slate-600">
-            <span className="font-medium">Industria:</span>{" "}
+          <p className="text-sm text-slate-200">
+            <span className="font-medium text-orange-200">Industria:</span>{" "}
             {companyData?.finnhubIndustry}
           </p>
-          <p className="text-sm text-slate-600">
-            <span className="font-medium">Moneda:</span> {companyData?.currency}
+          <p className="text-sm text-slate-200">
+            <span className="font-medium text-orange-200">Moneda:</span>{" "}
+            {companyData?.currency}
           </p>
         </div>
       </div>
@@ -116,7 +170,9 @@ function CompanyHeader({
   );
 }
 
-function CompanyOverview({ companyData }: { companyData: CompanyProfile }) {
+function CompanyOverview() {
+  const { companyData } = useDashboardContext();
+
   const formatMarketCap = (value: number) => {
     if (value >= 1e12) return `$${(value / 1e12).toFixed(2)}T`;
     if (value >= 1e9) return `$${(value / 1e9).toFixed(2)}B`;
@@ -214,17 +270,29 @@ function CompanyOverview({ companyData }: { companyData: CompanyProfile }) {
   );
 }
 
-function StockQuote({ symbol }: { symbol: string }) {
+type StockQuoteData = {
+  c: number; // precio actual
+  h: number; // precio alto del día
+  l: number; // precio bajo del día
+  o: number; // precio de apertura
+  pc: number; // precio de cierre anterior
+  t: number; // timestamp
+};
+
+function StockQuote() {
+  const { selectedCompanySymbol } = useDashboardContext();
   const [quote, setQuote] = useState<StockQuoteData | null>(null);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    if (!symbol) return;
+    if (!selectedCompanySymbol) return;
 
     const fetchQuote = async () => {
       setLoading(true);
       try {
-        const response = await fetch(`/api/stocks/${symbol}/quote`);
+        const response = await fetch(
+          `/api/stocks/${selectedCompanySymbol}/quote`,
+        );
         if (response.ok) {
           const { data }: { data: StockQuoteData } = await response.json();
           setQuote(data);
@@ -237,7 +305,7 @@ function StockQuote({ symbol }: { symbol: string }) {
     };
 
     fetchQuote();
-  }, [symbol]);
+  }, [selectedCompanySymbol]);
 
   if (loading) {
     return (
@@ -322,17 +390,27 @@ function StockQuote({ symbol }: { symbol: string }) {
   );
 }
 
-function CompanyNews({ symbol }: { symbol: string }) {
+type NewsArticle = {
+  headline: string;
+  summary: string;
+  url: string;
+  datetime: number;
+};
+
+function CompanyNews() {
+  const { selectedCompanySymbol } = useDashboardContext();
   const [news, setNews] = useState<NewsArticle[]>([]);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    if (!symbol) return;
+    if (!selectedCompanySymbol) return;
 
     const fetchNews = async () => {
       setLoading(true);
       try {
-        const response = await fetch(`/api/stocks/${symbol}/news`);
+        const response = await fetch(
+          `/api/stocks/${selectedCompanySymbol}/news`,
+        );
         if (response.ok) {
           const { data }: { data: NewsArticle[] } = await response.json();
           setNews(data.slice(0, 5)); // Solo mostramos las 5 noticias más recientes
@@ -345,7 +423,7 @@ function CompanyNews({ symbol }: { symbol: string }) {
     };
 
     fetchNews();
-  }, [symbol]);
+  }, [selectedCompanySymbol]);
 
   if (loading) {
     return (
