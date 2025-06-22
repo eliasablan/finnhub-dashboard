@@ -38,11 +38,11 @@ function CompanyHeader() {
 
   if (isLoadingCompanyData) {
     return (
-      <div className="flex h-dvh items-center justify-center gap-8">
+      <div className="mx-6 flex h-dvh items-center justify-center gap-4">
         <svg
           xmlns="http://www.w3.org/2000/svg"
-          width="48"
-          height="48"
+          width="64"
+          height="64"
           viewBox="0 0 24 24"
           fill="none"
           stroke="currentColor"
@@ -69,7 +69,7 @@ function CompanyHeader() {
     !isLoadingCompanyData
   ) {
     return (
-      <div className="flex h-dvh flex-col items-center justify-center gap-4">
+      <div className="mx-6 flex h-dvh flex-col items-center justify-center gap-4">
         <h2 className="text-2xl font-semibold text-slate-900">
           {selectedCompanySymbol}
         </h2>
@@ -81,8 +81,8 @@ function CompanyHeader() {
         </p>
         <svg
           xmlns="http://www.w3.org/2000/svg"
-          width="48"
-          height="48"
+          width="64"
+          height="64"
           viewBox="0 0 24 24"
           fill="none"
           stroke="currentColor"
@@ -101,11 +101,11 @@ function CompanyHeader() {
 
   if (!selectedCompanySymbol || !companyData) {
     return (
-      <div className="flex h-dvh items-center justify-center gap-8">
+      <div className="mx-6 flex h-dvh items-center justify-center gap-4">
         <svg
           xmlns="http://www.w3.org/2000/svg"
-          width="48"
-          height="48"
+          width="64"
+          height="64"
           viewBox="0 0 24 24"
           fill="none"
           stroke="currentColor"
