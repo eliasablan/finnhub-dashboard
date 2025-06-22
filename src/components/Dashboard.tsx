@@ -10,17 +10,17 @@ function Dashboard() {
 
   return (
     <main className="flex-1 overflow-y-auto">
-      <div className="mx-auto max-w-[1440px] p-8">
+      <div className="mx-auto max-w-[1440px]">
         <CompanyHeader />
         {selectedCompanySymbol && !isLoadingCompanyData && companyData && (
-          <>
+          <div className="p-8">
             <CompanyOverview />
 
             <div className="mb-8 grid grid-cols-1 gap-6 lg:grid-cols-2">
               <StockQuote />
               <CompanyNews />
             </div>
-          </>
+          </div>
         )}
       </div>
     </main>
@@ -101,7 +101,7 @@ function CompanyHeader() {
 
   if (!selectedCompanySymbol || !companyData) {
     return (
-      <div className="flex h-dvh items-center justify-center gap-8">
+      <div className="flex h-dvh items-center justify-center gap-8 border">
         <svg
           xmlns="http://www.w3.org/2000/svg"
           width="48"
@@ -130,8 +130,8 @@ function CompanyHeader() {
   }
 
   return (
-    <header className="mb-8 rounded-xl border border-slate-200 bg-slate-600 p-6">
-      <div className="flex items-center justify-between">
+    <header className="p-8 pb-0">
+      <div className="flex items-center justify-between rounded-xl border border-slate-200 bg-slate-600 p-6">
         <div className="flex items-center gap-4">
           {companyData?.logo && (
             <Image
