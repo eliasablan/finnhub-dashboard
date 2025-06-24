@@ -3,6 +3,8 @@
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import { useDashboardContext } from "@/providers/DashboardContext";
+import { useLocalStorage } from "usehooks-ts";
+import { cn } from "@/lib/utils";
 
 function Dashboard() {
   const { companyData, isLoadingCompanyData, selectedCompanySymbol } =
@@ -35,6 +37,42 @@ function CompanyHeader() {
     selectedCompanySymbol,
     isLoadingCompanyData,
   } = useDashboardContext();
+
+  const [favouriteStocks, setFavouriteStocks] = useLocalStorage<
+    { symbol: string; name: string }[]
+  >("favouriteStocks", [], {
+    serializer: (value) => JSON.stringify(value),
+    deserializer: (value) => {
+      try {
+        return JSON.parse(value);
+      } catch {
+        return [];
+      }
+    },
+  });
+
+  const isFavourite = favouriteStocks.some(
+    (stock) => stock.symbol === selectedCompanySymbol,
+  );
+
+  const toggleFavourite = () => {
+    if (!selectedCompanySymbol || !companyData?.name) return;
+
+    const stockToToggle = {
+      symbol: selectedCompanySymbol,
+      name: companyData.name,
+    };
+
+    if (isFavourite) {
+      // Remover de favoritos
+      setFavouriteStocks((prev) =>
+        prev.filter((stock) => stock.symbol !== selectedCompanySymbol),
+      );
+    } else {
+      // Agregar a favoritos
+      setFavouriteStocks((prev) => [...prev, stockToToggle]);
+    }
+  };
 
   if (isLoadingCompanyData) {
     return (
@@ -130,37 +168,69 @@ function CompanyHeader() {
   }
 
   return (
-    <header className="@container p-8 pb-0">
-      <div className="flex flex-col items-center justify-between gap-4 rounded-xl border border-slate-200 bg-slate-600 p-6 @lg:flex-row">
-        <div className="flex w-full flex-row-reverse items-start justify-between gap-4 @lg:flex-row @lg:items-center @lg:justify-start">
-          {companyData?.logo && (
-            <Image
-              src={companyData.logo}
-              alt={companyData.name || ""}
-              width={48}
-              height={48}
-              className="w-[48px] rounded-full border-2 border-slate-200"
-            />
-          )}
-          <div>
-            <h1 className="text-3xl font-bold text-amber-200">
-              {companyData?.name}
-            </h1>
-            <p className="mt-1 text-lg text-slate-200">
-              {companyData?.ticker} • {companyData?.exchange}
-            </p>
+    <header className="@container p-4 pb-0 sm:p-8">
+      <div className="flex flex-col gap-6 rounded-xl border border-slate-200 bg-slate-600 p-4 sm:p-6">
+        {/* Fila superior con logo, nombre y botón favorito */}
+        <div className="flex items-start justify-between gap-4">
+          <div className="flex items-center gap-4">
+            {companyData?.logo && (
+              <Image
+                src={companyData.logo}
+                alt={companyData.name || ""}
+                width={64}
+                height={64}
+                className="w-12 rounded-full border-2 border-slate-200 sm:w-[64px]"
+              />
+            )}
+            <div>
+              <h1 className="text-2xl font-bold text-amber-200 sm:text-3xl">
+                {companyData?.name}
+              </h1>
+              <p className="mt-1 text-base text-slate-200 sm:text-lg">
+                {companyData?.ticker} • {companyData?.exchange}
+              </p>
+            </div>
           </div>
+
+          <button
+            className={cn(
+              "group flex size-auto items-start justify-end text-slate-400 duration-300",
+              isFavourite && "text-amber-200",
+            )}
+            aria-label={
+              isFavourite ? "Quitar de favoritos" : "Agregar a favoritos"
+            }
+            title={isFavourite ? "Quitar de favoritos" : "Agregar a favoritos"}
+            onClick={toggleFavourite}
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill={isFavourite ? "currentColor" : "none"}
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              className="lucide lucide-star-icon lucide-star group-hover:animate-pulse"
+            >
+              <path d="M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z" />
+            </svg>
+          </button>
         </div>
-        <div className="w-full space-y-1 text-left @lg:w-fit @lg:text-right">
-          <p className="text-sm text-nowrap text-slate-200">
+
+        {/* Fila inferior con detalles */}
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+          <p className="text-sm text-slate-200">
             <span className="font-medium text-orange-200">País:</span>{" "}
             {companyData?.country}
           </p>
-          <p className="text-sm text-nowrap text-slate-200">
+          <p className="text-sm text-slate-200">
             <span className="font-medium text-orange-200">Industria:</span>{" "}
             {companyData?.finnhubIndustry}
           </p>
-          <p className="text-sm text-nowrap text-slate-200">
+          <p className="text-sm text-slate-200">
             <span className="font-medium text-orange-200">Moneda:</span>{" "}
             {companyData?.currency}
           </p>

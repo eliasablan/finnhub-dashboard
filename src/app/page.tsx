@@ -2,7 +2,7 @@ import { DashboardProvider } from "@/providers/DashboardContext";
 import { Sidebar } from "@/components/Sidebar";
 import Dashboard from "@/components/Dashboard";
 import { FavouriteStocks } from "@/components/FavouriteStocks";
-import { CloseSidebarButton } from "@/components/CloseSidebarButton";
+import { OpenSidebarButton } from "@/components/OpenSidebarButton";
 import { Suspense } from "react";
 
 export default function Home() {
@@ -15,8 +15,11 @@ export default function Home() {
 
           {/* Main content que ocupa todo el ancho, pero se ajusta al sidebar en pantallas grandes */}
           <div className="flex w-full flex-col">
-            <div className="flex h-auto w-full justify-between border bg-slate-600 p-4">
-              <CloseSidebarButton />
+            <div className="flex h-auto w-full items-center justify-between bg-slate-600 p-4">
+              <OpenSidebarButton />
+              <h1 className="font-mono text-2xl font-bold text-slate-200">
+                Stock Finder
+              </h1>
               <FavouriteStocks />
             </div>
             <Dashboard />

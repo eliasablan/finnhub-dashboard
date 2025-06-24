@@ -2,12 +2,12 @@
 
 import { useDashboardContext } from "@/providers/DashboardContext";
 
-export function CloseSidebarButton() {
-  const { setMobileOpen } = useDashboardContext();
+export function OpenSidebarButton() {
+  const { setMobileOpen, mobileOpen } = useDashboardContext();
 
   return (
     <button
-      onClick={() => setMobileOpen(false)}
+      onClick={() => setMobileOpen(!mobileOpen)}
       className="rounded-lg border border-gray-300 bg-white px-3 py-2 text-gray-900 shadow hover:bg-gray-100 focus:ring-2 focus:ring-blue-500 focus:outline-none dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100 dark:hover:bg-gray-700"
     >
       <svg
@@ -20,11 +20,10 @@ export function CloseSidebarButton() {
         strokeWidth="2"
         strokeLinecap="round"
         strokeLinejoin="round"
-        className="lucide lucide-panel-left-close-icon lucide-panel-left-close"
+        className="lucide lucide-search-icon lucide-search"
       >
-        <rect width="18" height="18" x="3" y="3" rx="2" />
-        <path d="M9 3v18" />
-        <path d="m16 15-3-3 3-3" />
+        <path d="m21 21-4.34-4.34" />
+        <circle cx="11" cy="11" r="8" />
       </svg>
     </button>
   );

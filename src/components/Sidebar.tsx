@@ -3,6 +3,7 @@
 import React from "react";
 import { stockTypes, useDashboardContext } from "../providers/DashboardContext";
 import { cn } from "@/lib/utils";
+import { CloseSidebarButton } from "./CloseSidebarButton";
 
 export function Sidebar({ className }: { className?: string }) {
   const {
@@ -53,7 +54,13 @@ export function Sidebar({ className }: { className?: string }) {
       >
         <div className="sticky top-0 z-10 border-b border-gray-200 bg-white p-5 dark:border-gray-700 dark:bg-slate-600">
           <div className="space-y-2">
-            <div className="relative">
+            <div className="my-0 flex items-center justify-between pb-2">
+              <CloseSidebarButton />
+              <h2 className="font-mono text-3xl font-bold text-slate-200">
+                Stock Finder
+              </h2>
+            </div>
+            <div className="relative mt-5">
               <input
                 type="text"
                 value={searchQuery}
@@ -97,40 +104,40 @@ export function Sidebar({ className }: { className?: string }) {
           </div>
         </div>
         <div className="flex-1 overflow-y-scroll">
-            {isSidebarLoading && (
-              <>
-                {Array.from({ length: 20 }).map((_, index) => (
+          {isSidebarLoading && (
+            <>
+              {Array.from({ length: 20 }).map((_, index) => (
+                <div
+                  key={index}
+                  className={cn(
+                    "flex flex-col gap-2 border-b border-slate-100 px-4 py-3",
+                    index % 3 === 0
+                      ? "delay-75"
+                      : index % 3 === 1
+                        ? "delay-150"
+                        : "delay-300",
+                  )}
+                >
                   <div
-                    key={index}
                     className={cn(
-                      "flex flex-col gap-2 border-b border-slate-100 px-4 py-3",
-                      index % 3 === 0
-                        ? "delay-75"
-                        : index % 3 === 1
-                          ? "delay-150"
-                          : "delay-300",
+                      "h-5 w-3/4 animate-pulse rounded",
+                      index % 2 === 0
+                        ? "bg-gradient-to-r from-slate-200 to-slate-100"
+                        : "bg-gradient-to-l from-slate-200 to-slate-100",
                     )}
-                  >
-                    <div
-                      className={cn(
-                        "h-5 w-3/4 animate-pulse rounded",
-                        index % 2 === 0
-                          ? "bg-gradient-to-r from-slate-200 to-slate-100"
-                          : "bg-gradient-to-l from-slate-200 to-slate-100",
-                      )}
-                    />
-                    <div
-                      className={cn(
-                        "h-4 w-1/3 animate-pulse rounded",
-                        index % 2 === 0
-                          ? "bg-gradient-to-r from-slate-100 to-slate-200"
-                          : "bg-gradient-to-l from-slate-100 to-slate-200",
-                      )}
-                    />
-                  </div>
-                ))}
-              </>
-            )}
+                  />
+                  <div
+                    className={cn(
+                      "h-4 w-1/3 animate-pulse rounded",
+                      index % 2 === 0
+                        ? "bg-gradient-to-r from-slate-100 to-slate-200"
+                        : "bg-gradient-to-l from-slate-100 to-slate-200",
+                    )}
+                  />
+                </div>
+              ))}
+            </>
+          )}
           {!isSidebarLoading &&
             Array.isArray(stockResults) &&
             stockResults.map((company) => (
