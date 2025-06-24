@@ -15,7 +15,7 @@ function Dashboard() {
       <div className="mx-auto max-w-[1440px]">
         <CompanyHeader />
         {selectedCompanySymbol && !isLoadingCompanyData && companyData && (
-          <div className="p-8">
+          <div className="p-4 sm:p-8">
             <CompanyOverview />
 
             <div className="mb-8 grid grid-cols-1 gap-6 lg:grid-cols-2">
@@ -168,7 +168,7 @@ function CompanyHeader() {
   }
 
   return (
-    <header className="@container p-4 pb-0 sm:p-8">
+    <header className="@container p-4 pb-0 sm:p-8 sm:pb-0">
       <div className="flex flex-col gap-6 rounded-xl border border-slate-200 bg-slate-600 p-4 sm:p-6">
         {/* Fila superior con logo, nombre y botón favorito */}
         <div className="flex items-start justify-between gap-4">
