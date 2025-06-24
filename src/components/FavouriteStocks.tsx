@@ -39,7 +39,7 @@ export function FavouriteStocks() {
       <button
         aria-label="Seleccionar acción favorita"
         onClick={() => setOpen((prev) => !prev)}
-        className="flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-3 py-2 text-gray-900 shadow hover:bg-gray-100 focus:ring-2 focus:ring-blue-500 focus:outline-none dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100 dark:hover:bg-gray-700"
+        className="dark:hover:bg flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-3 py-2 text-gray-900 shadow hover:bg-gray-100 focus:ring-2 focus:ring-blue-500 focus:outline-none dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100"
       >
         <span className="text-lg">⭐</span>
         <span className="-mr-1 text-xs">▼</span>
@@ -55,7 +55,7 @@ export function FavouriteStocks() {
                 setSelectedCompanySymbol(option.value);
                 setOpen(false);
               }}
-              className="cursor-pointer px-4 py-3 text-sm text-gray-700 transition-colors hover:bg-blue-50 dark:text-gray-100 dark:hover:bg-blue-600"
+              className="cursor-pointer px-4 py-3 text-sm font-bold text-gray-700 transition-colors hover:bg-blue-50 dark:text-gray-100 dark:hover:bg-blue-600"
             >
               {option.label}
             </li>

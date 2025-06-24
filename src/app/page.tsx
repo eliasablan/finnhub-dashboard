@@ -10,8 +10,10 @@ export default function Home() {
     <Suspense fallback={<LoadingSkeleton />}>
       <DashboardProvider>
         <div className="flex h-screen max-h-screen w-full overflow-hidden">
-          <Sidebar className="absolute w-full md:relative md:w-[400px] md:flex-none" />
+          {/* Sidebar como overlay */}
+          <Sidebar />
 
+          {/* Main content que ocupa todo el ancho, pero se ajusta al sidebar en pantallas grandes */}
           <div className="flex w-full flex-col">
             <div className="flex h-auto w-full justify-between border bg-slate-600 p-4">
               <CloseSidebarButton />
