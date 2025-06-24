@@ -1,18 +1,24 @@
 import { DashboardProvider } from "@/providers/DashboardContext";
 import { Sidebar } from "@/components/Sidebar";
 import Dashboard from "@/components/Dashboard";
-import { MobileMenuButton } from "@/components/MobileMenuButton";
+import { FavouriteStocks } from "@/components/FavouriteStocks";
+import { CloseSidebarButton } from "@/components/CloseSidebarButton";
 import { Suspense } from "react";
 
 export default function Home() {
   return (
     <Suspense fallback={<LoadingSkeleton />}>
       <DashboardProvider>
-        <div className="flex h-screen max-h-screen overflow-hidden">
+        <div className="flex h-screen max-h-screen w-full overflow-hidden">
           <Sidebar className="absolute w-full md:relative md:w-[400px] md:flex-none" />
 
-          <Dashboard />
-          <MobileMenuButton />
+          <div className="flex w-full flex-col">
+            <div className="flex h-auto w-full justify-between border bg-slate-600 p-4">
+              <CloseSidebarButton />
+              <FavouriteStocks />
+            </div>
+            <Dashboard />
+          </div>
         </div>
       </DashboardProvider>
     </Suspense>

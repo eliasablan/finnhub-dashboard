@@ -27,20 +27,18 @@ export function Sidebar({ className }: { className?: string }) {
     setMobileOpen(false);
   };
 
+  console.log(mobileOpen);
+
   return (
     <aside
       className={cn(
-        "flex max-w-screen flex-col border border-slate-600 bg-white transition-transform duration-300 md:translate-x-0 md:border-0",
-        !mobileOpen ? "-translate-x-full md:translate-x-0" : "translate-x-0",
+        "z-50 flex max-w-screen flex-col border border-slate-600 bg-white transition-transform duration-300 md:border-0",
+        !mobileOpen && "-translate-x-full",
         className,
       )}
     >
       <div className="sticky top-0 z-10 border-b border-gray-200 bg-white p-4 dark:border-gray-700 dark:bg-gray-900">
         <div className="space-y-3">
-          <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100">
-            Filtrar Acciones
-          </h2>
-
           <div className="relative">
             <input
               type="text"
@@ -82,13 +80,6 @@ export function Sidebar({ className }: { className?: string }) {
               </option>
             ))}
           </select>
-
-          {/* {isSidebarLoading && (
-            <div className="flex items-center justify-center pt-2 text-gray-500 dark:text-gray-400">
-              <span className="mr-2 animate-spin">⏳</span>
-              Cargando...
-            </div>
-          )} */}
         </div>
       </div>
       <div className="flex-1 overflow-y-auto">
